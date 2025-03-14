@@ -1,112 +1,36 @@
-DROP TABLE "users" (
-  "id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-  "name" VARCHAR NOT NULL,
-	"email" VARCHAR NOT NULL UNIQUE,
-	"password" VARCHAR NOT NULL,
-  "is_active" BOOLEAN NOT NULL DEFAULT false,
-	"is_verified" BOOLEAN NOT NULL DEFAULT false,
-  "created_at" TIMESTAMP NOT NULL DEFAULT now(),
-  "updated_at" TIMESTAMP NOT NULL DEFAULT now()
-);
+ALTER TABLE "users" DROP CONSTRAINT "users_user_auth0_id_fkey";
+ALTER TABLE "user_roles" DROP CONSTRAINT "user_roles_user_id_fkey";
+ALTER TABLE "user_roles" DROP CONSTRAINT "user_roles_role_id_fkey";
+ALTER TABLE "user_wallets" DROP CONSTRAINT "user_wallets_user_id_fkey";
+ALTER TABLE "user_wallets" DROP CONSTRAINT "user_wallets_wallet_source_id_fkey";
+ALTER TABLE "user_wallets" DROP CONSTRAINT "user_wallets_wallet_currency_id_fkey";
+ALTER TABLE "user_budgets" DROP CONSTRAINT "user_budgets_user_id_fkey";
+ALTER TABLE "user_budgets" DROP CONSTRAINT "user_budgets_transaction_period_id_fkey";
+ALTER TABLE "user_goals" DROP CONSTRAINT "user_goals_user_id_fkey";
+ALTER TABLE "user_goals" DROP CONSTRAINT "user_goals_transaction_period_id_fkey";
+ALTER TABLE "goal_transactions" DROP CONSTRAINT "goal_transactions_user_id_fkey";
+ALTER TABLE "goal_transactions" DROP CONSTRAINT "goal_transactions_goal_id_fkey";
+ALTER TABLE "user_tranfers" DROP CONSTRAINT "user_transfers_user_id_fkey";
+ALTER TABLE "user_transfers" DROP CONSTRAINT "user_transfers_user_id_receiver_fkey";
+ALTER TABLE "user_transfers" DROP CONSTRAINT "user_transfers_user_id_sender_fkey";
+ALTER TABLE "user_incomes" DROP CONSTRAINT "user_incomes_user_id_fkey";
+ALTER TABLE "user_incomes" DROP CONSTRAINT "user_incomes_user_wallet_id_fkey";
+ALTER TABLE "user_outcomes" DROP CONSTRAINT "user_outcomes_user_id_fkey";
+ALTER TABLE "user_outcomes" DROP CONSTRAINT "user_outcomes_user_wallet_id_fkey";
+ALTER TABLE "user_outcomes" DROP CONSTRAINT "user_outcomes_user_budget_id_fkey";
 
-DROP TABLE "users_auth0" (
-	id UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	auth_id VARCHAR NOT NULL UNIQUE,
-	created_at TIMESTAMP NOT NULL DEFAULT now(),
-	updated_at TIMESTAMP NOT NULL DEFAULT now()
-);
 
-DROP TABLE "roles" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL UNIQUE,
-	"is_active" BOOLEAN NOT NULL DEFAULT true,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now()
-);
-
-DROP TABLE "user_roles" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"user_id" UUID NOT NULL,
-	"role_id" UUID NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE,
-	FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE CASCADE
-);
-
-DROP TABLE "wallet_types" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL UNIQUE,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now()
-);
-
-DROP TABLE "user_wallets" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"user_id" UUID NOT NULL,
-	"name" VARCHAR NOT NULL,
-	"wallet_type_id" UUID NOT NULL,
-	"balance" DECIMAL NOT NULL DEFAULT 0,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE,
-	FOREIGN KEY ("wallet_type_id") REFERENCES "wallet_types"("id") ON DELETE CASCADE
-);
-
-DROP TABLE "transaction_types" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now()
-);
-
-DROP TABLE "budget_categories" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now()
-);
-
-DROP TABLE "user_budgets" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"name" VARCHAR NOT NULL,
-	"description" VARCHAR NOT NULL,
-	"amount" DECIMAL NOT NULL DEFAULT 0,
-	"user_id" UUID NOT NULL,
-	"budget_category_id" UUID NOT NULL,
-	"transaction_type_id" UUID NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE,
-	FOREIGN KEY ("budget_category_id") REFERENCES "budget_categories"("id") ON DELETE CASCADE
-	FOREIGN KEY ("transaction_type_id") REFERENCES "transaction_types"("id") ON DELETE CASCADE
-);
-
-DROP TABLE "user_transactions" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"user_id" UUID NOT NULL,
-	"amount" DECIMAL NOT NULL DEFAULT 0,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE,
-);
-
-DROP TABLE "user_wallet_transactions" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"user_wallet_id" UUID NOT NULL,
-	"user_transaction_id" UUID NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_wallet_id") REFERENCES "user_wallets"("id") ON DELETE CASCADE,
-	FOREIGN KEY ("user_transaction_id") REFERENCES "user_transactions"("id") ON DELETE CASCADE
-);
-
-DROP TABLE "user_budget_transactions" (
-	"id" UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
-	"user_budget_id" UUID NOT NULL,
-	"user_transaction_id" UUID NOT NULL,
-	"created_at" TIMESTAMP NOT NULL DEFAULT now(),
-	"updated_at" TIMESTAMP NOT NULL DEFAULT now(),
-	FOREIGN KEY ("user_budget_id") REFERENCES "user_budgets"("id") ON DELETE CASCADE,
-	FOREIGN KEY ("user_transaction_id") REFERENCES "user_transactions"("id") ON DELETE CASCADE
-);
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "users_auth0";
+DROP TABLE IF EXISTS "roles";
+DROP TABLE IF EXISTS "user_roles";
+DROP TABLE IF EXISTS "wallet_sources";
+DROP TABLE IF EXISTS "wallet_currencies";
+DROP TABLE IF EXISTS "user_wallets";
+DROP TABLE IF EXISTS "transaction_periods";
+DROP TABLE IF EXISTS "user_budgets";
+DROP TABLE IF EXISTS "user_goals";
+DROP TABLE IF EXISTS "goal_transactions";
+DROP TABLE IF EXISTS "user_transfers";
+DROP TABLE IF EXISTS "user_incomes";
+DROP TABLE IF EXISTS "user_outcomes";
